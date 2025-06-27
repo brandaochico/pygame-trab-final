@@ -1,3 +1,5 @@
+""" Sprites para entidades e animações de entidades """
+
 import pygame
 
 from settings import *
@@ -82,3 +84,10 @@ class Player(AnimatedSprite):
         self.frame_index = 1 if not self.on_floor else self.frame_index
         self.image = self.frames[int(self.frame_index) % len(self.frames)]
         self.image = pygame.transform.flip(self.image, self.flip, False)
+
+class Bat(AnimatedSprite):
+    def __init__(self, frames, pos, groups):
+        super().__init__(frames, pos, groups)
+
+    def update(self, dt):
+        self.animate(dt)

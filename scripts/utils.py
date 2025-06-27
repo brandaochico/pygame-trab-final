@@ -1,3 +1,5 @@
+""" Funções de uso geral """
+
 from settings import *
 
 def import_image(*path, format = 'png', alpha = True):
@@ -12,3 +14,12 @@ def import_folder(*path):
             frames.append(pygame.image.load(full_path).convert_alpha())
 
     return frames
+
+def audio_importer(*path):
+    audios = {}
+    for folder_path, _, file_names in walk(join('..', *path)):
+        for file_name in file_names:
+            full_path = join(folder_path, file_name)
+            audios[file_name.split('.')[0]] = pygame.mixer.Sound(full_path)
+
+    return audios

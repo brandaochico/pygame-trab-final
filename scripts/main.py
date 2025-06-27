@@ -1,9 +1,11 @@
 """ main.py """
+import pygame
 
 from settings import *
 from sprites import *
 from groups import AllSprites
 from utils import *
+from timer import Timer
 
 class Game():
     def __init__(self):
@@ -24,9 +26,22 @@ class Game():
         self.load_assets()
         self.setup()
 
+        # Timers
+        self.bat_timer = Timer(3000, self.spawn_bat, True, True)
+
+    def spawn_bat(self):
+        Bat(self.bat_frames, (randint(100, 300), randint(150, 350)), self.all_sprites)
+
     def load_assets(self):
         self.player_frames_1 = import_folder('Tiles', 'Player_1')
-        print(self.player_frames_1)
+        self.player_frames_2 = import_folder('Tiles', 'Player_2')
+        self.player_frames_3 = import_folder('Tiles', 'Player_3')
+
+        self.bat_frames = import_folder('Tiles', 'Bat')
+
+        self.audio = audio_importer('audio')
+        pygame.Sound.set_volume(self.audio['music'], 0.05)
+        self.audio['music'].play()
 
     def setup(self):
         tmx_map = load_pygame(join('..', 'assets', 'Tilemap', 'world-1.tmx'))
@@ -52,6 +67,7 @@ class Game():
                     self.running = False
 
             # Update
+            self.bat_timer.update()
             self.all_sprites.update(dt)
 
             # Camera lerp
@@ -59,7 +75,7 @@ class Game():
             self.camera_pos += (pygame.Vector2(target_pos) - self.camera_pos) * min(10 * dt, 1)
 
             self.display.fill(BG_COLOR)
-            self.all_sprites.draw(self.camera_pos, zoom=2.0)
+            self.all_sprites.draw(self.camera_pos, zoom=3.0)
             pygame.display.update()
 
         pygame.quit()

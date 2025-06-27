@@ -1,3 +1,5 @@
+""" Grupos de sprites personalizdos para renderização customizadas """
+
 from settings import *
 
 class AllSprites(pygame.sprite.Group):
