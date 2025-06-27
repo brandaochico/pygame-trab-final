@@ -3,6 +3,7 @@
 from settings import *
 from sprites import *
 from groups import AllSprites
+from utils import *
 
 class Game():
     def __init__(self):
@@ -20,7 +21,12 @@ class Game():
         self.camera_pos = pygame.Vector2()
 
         # Load game
+        self.load_assets()
         self.setup()
+
+    def load_assets(self):
+        self.player_frames_1 = import_folder('Tiles', 'Player_1')
+        print(self.player_frames_1)
 
     def setup(self):
         tmx_map = load_pygame(join('..', 'assets', 'Tilemap', 'world-1.tmx'))
@@ -33,7 +39,7 @@ class Game():
 
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'Player':
-                self.player = Player((obj.x, obj.y), self.collision_sprites, self.all_sprites)
+                self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites, self.player_frames_1)
 
     def run(self):
         while self.running:
