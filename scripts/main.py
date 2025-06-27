@@ -2,6 +2,7 @@
 
 from settings import *
 from sprites import *
+from groups import AllSprites
 
 class Game():
     def __init__(self):
@@ -12,8 +13,11 @@ class Game():
         self.running = True
 
         # Grupos
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
+
+        # Camera position
+        self.camera_pos = pygame.Vector2()
 
         # Load game
         self.setup()
@@ -25,11 +29,11 @@ class Game():
             Sprite((x * TILE_SIZE, y * TILE_SIZE), image, (self.all_sprites, self.collision_sprites))
 
         for x, y, image in tmx_map.get_layer_by_name('Decoration').tiles():
-            Sprite((x * TILE_SIZE, y * TILE_SIZE), image, (self.all_sprites, self.collision_sprites))
+            Sprite((x * TILE_SIZE, y * TILE_SIZE), image, (self.all_sprites))
 
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'Player':
-                Player((obj.x, obj.y), self.collision_sprites, self.all_sprites)
+                self.player = Player((obj.x, obj.y), self.collision_sprites, self.all_sprites)
 
     def run(self):
         while self.running:
@@ -44,8 +48,12 @@ class Game():
             # Update
             self.all_sprites.update(dt)
 
+            # Camera lerp
+            target_pos = self.player.rect.center
+            self.camera_pos += (pygame.Vector2(target_pos) - self.camera_pos) * min(10 * dt, 1)
+
             self.display.fill(BG_COLOR)
-            self.all_sprites.draw(self.display)
+            self.all_sprites.draw(self.camera_pos, zoom=2.0)
             pygame.display.update()
 
         pygame.quit()
